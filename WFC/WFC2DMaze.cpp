@@ -824,6 +824,8 @@ void DrawSprite4X4ToImage(FImage* OutImage, const FSprite4X4* InSprite, const FV
 	}
 }
 
+//如果要生成2D迷宫就打开这里
+/*
 int main()
 {
 	//初始化随机数种子
@@ -850,3 +852,4 @@ int main()
 
 	return 0;
 }
+*/
