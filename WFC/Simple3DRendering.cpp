@@ -228,7 +228,7 @@ public:
 	vector<vector<FColor>> Imagedata;
 };
 
-//如果要生成2D迷宫就打开这里
+//如果要生成就打开这里
 #if 1
 int main()
 {
