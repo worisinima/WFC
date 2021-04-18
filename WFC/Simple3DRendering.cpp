@@ -228,6 +228,8 @@ public:
 	vector<vector<FColor>> Imagedata;
 };
 
+//如果要生成2D迷宫就打开这里
+#if 1
 int main()
 {
 	vec3 a = vec3(1, 0, 0);
@@ -236,3 +238,4 @@ int main()
 
 	return 0;
 }
+#endif
