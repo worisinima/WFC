@@ -142,6 +142,9 @@
     <ClCompile Include="Simple3DRendering.cpp" />
     <ClCompile Include="WFC2DMaze.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FreeImage.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
