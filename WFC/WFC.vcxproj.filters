@@ -1,10 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="WFC2DMaze.cpp" />
-    <ClCompile Include="Simple3DRendering.cpp" />
+    <ClCompile Include="Simple3DRendering.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="WFC2DMaze.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FreeImage.h" />
+    <Filter Include="Public">
+      <UniqueIdentifier>{0f051bcc-4cc5-426e-85d3-44ffd3d6ed34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{5aace5ab-d158-4456-adab-50d0c62f5c92}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FreeImage.h">
+      <Filter>Public</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
