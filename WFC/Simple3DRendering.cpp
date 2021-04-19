@@ -90,11 +90,11 @@ public:
 	int R, G, B;
 };
 
-template<class Type>
+
 class vec2
 {
 public:
-	vec2(Type x, Type y) : X(x), Y(y) {}
+	vec2(float x, float y) : X(x), Y(y) {}
 	vec2() :X(0), Y(0) {}
 	~vec2() {}
 	vec2 operator+ (const vec2& Ref) { vec2 ret; ret.X = this->X + Ref.X; ret.Y = this->Y + Ref.Y; return ret; }
@@ -102,15 +102,17 @@ public:
 	vec2 operator+ (const vec2& Ref)const { vec2 ret; ret.X = this->X + Ref.X; ret.Y = this->Y + Ref.Y; return ret; }
 	vec2 operator- (const vec2& Ref)const { vec2 ret; ret.X = this->X - Ref.X; ret.Y = this->Y - Ref.Y; return ret; }
 	vec2 operator* (const vec2& Ref) { vec2 ret; ret.X = this->X * Ref.X; ret.Y = this->Y * Ref.Y; return ret; }
-	vec2 operator* (const Type& fval)const { vec2 ret; ret.X = this->X * fval; ret.Y = this->Y * fval; return ret; }
+	vec2 operator* (const float& fval)const { vec2 ret; ret.X = this->X * fval; ret.Y = this->Y * fval; return ret; }
 	vec2 operator/ (const vec2& Ref)const { vec2 ret; ret.X = this->X / Ref.X; ret.Y = this->Y / Ref.Y; return ret; }
-	vec2 operator/ (const Type& fval)const { vec2 ret; ret.X = this->X / fval; ret.Y = this->Y / fval; return ret; }
+	vec2 operator/ (const float& fval)const { vec2 ret; ret.X = this->X / fval; ret.Y = this->Y / fval; return ret; }
 	void operator= (const vec2& Ref) { this->X = Ref.X; this->Y = Ref.Y; }
 	bool operator== (const vec2& Ref)const { return this->X == Ref.X && this->Y == Ref.Y; }
 	bool operator!= (const vec2& Ref)const { return this->X != Ref.X || this->Y != Ref.Y; }
 	void Print() { cout << "X: " << X << "  " << "Y: " << Y << endl; }
-	Type X, Y;
+	float length()const{ return sqrt(X*X + Y*Y); }
+	float X, Y;
 };
+float length(const vec2& v){return v.length(); }
 
 class vec3
 {
@@ -144,8 +146,14 @@ vec3 operator*(const vec3& v, const double& t) {return vec3(t * v.X, t * v.Y, t 
 double dot(const vec3& v1, const vec3& v2) {return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;}
 vec3 cross(const vec3& v1, const vec3& v2) {return vec3((v1.Y * v2.Z - v1.Z * v2.Y),(-(v1.X * v2.Z - v1.Z * v2.X)),(v1.X * v2.Y - v1.Y * v2.X));}
 vec3 normalize(vec3&& v) {return v / v.length();}
-double length(const vec3& v) { return v.length(); }
-vec3 abs(const vec3&& v){return vec3(fabs(v.X), fabs(v.Y), fabs(v.Z));}
+double length(const vec3& v) {return v.length(); }
+vec3 abs(const vec3& v){return vec3(fabs(v.X), fabs(v.Y), fabs(v.Z));}
+float Max(const float& a, const float& b){return a > b ? a : b;}
+float Min(const float& a, const float& b){return a < b ? a : b;}
+vec3 Max(const vec3& a, const vec3& b) { return vec3(Max(a.X, b.X), Max(a.Y, b.Y), Max(a.Y, b.Y)); }
+vec3 Min(const vec3& a, const vec3& b) { return vec3(Min(a.X, b.X), Min(a.Y, b.Y), Min(a.Y, b.Y)); }
+float clamp(const float& val, const float& a, const float& b){ return val > a ? a : val < b ? b : val; }
+vec3 clamp(const vec3& val, const vec3& a, const vec3& b){ return vec3(clamp(val.X, a.X, b.X), clamp(val.X, a.X, b.X), clamp(val.X, a.X, b.X)); }
 
 class mat3
 {
@@ -305,11 +313,11 @@ public:
 			}
 		}
 	}
-	void SetPixleColor(const FColor& newData, const vec2<int>& PixleLocation)
+	void SetPixleColor(const FColor& newData, const vec2& PixleLocation)
 	{
 		if (PixleLocation.X < SizeX && PixleLocation.Y < SizeY) (*Imagedata)[PixleLocation.Y * SizeX + PixleLocation.X] = newData;
 	}
-	void SetPixleColor(const int& newData, const vec2<int>& PixleLocation)
+	void SetPixleColor(const int& newData, const vec2& PixleLocation)
 	{
 		if (PixleLocation.X < SizeX && PixleLocation.Y < SizeY) (*Imagedata)[PixleLocation.Y * SizeX + PixleLocation.X] = FColor(newData);
 	}
@@ -325,20 +333,47 @@ float sdSphere(vec3 p, float r)
 	return length(p) - r;
 }
 
+float sdBox(vec3 p, vec3 b)
+{
+	vec3 d = abs(p) - b;
+	return Min(Max(d.X, Max(d.Y, d.Z)), 0.0001f) + length(Max(d, vec3(0.0001, 0.0001, 0.0001)));
+}
+
+float sdCapsule(vec3 p, vec3 a, vec3 b, float r)
+{
+	vec3 pa = p - a;
+	vec3 ba = b - a;
+	float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+	return length(pa - ba * h) - r;
+}
+
+float sdTorus(vec3 p, vec2 t)//t.x out radius t.y inner radius
+{
+	return length(vec2(length(vec2(p.X, p.Z)) - t.X, p.Y)) - t.Y;
+}
+
+//Distance Feild Operation
+float opU(float d1, float d2)
+{
+	return (d1 < d2) ? d1 : d2;
+}
+
 float Scene(const vec3& p)
 {
 	float d = 0.0;
 
-	float Sphere = sdSphere(p - vec3(0, 0, 0), 3.0);
-	
-	d = Sphere;
+	float Sphere = sdSphere(p - vec3(0, 0, 0), 2.0);
+	float Box = sdBox(p - vec3(0, 0, 0), vec3(1, 1, 1));
+	float Capsule = sdCapsule(p, vec3(0, 0, 0), vec3(0, 0, 3), 1);
+	float Torus = sdTorus(p, vec2(3, 1));
+	d = opU(Sphere, Torus);
 
 	return d;
 }
 
 vec3 CalcNormal(const vec3& pos)
 {
-	vec2<float> eps = vec2<float>(0.002, 0.0);
+	vec2 eps = vec2(0.002, 0.0);
 	return normalize(vec3(
 		Scene(pos + vec3(eps.X, eps.Y, eps.Y)) - Scene(pos - vec3(eps.X, eps.Y, eps.Y)),
 		Scene(pos + vec3(eps.Y, eps.X, eps.Y)) - Scene(pos - vec3(eps.Y, eps.X, eps.Y)),
@@ -358,7 +393,7 @@ vec3 Lighting(const vec3& p, const vec3& rd)
 #if 1
 int main()
 {
-	FImage* outImage = new FImage(400, 300, "OutImage");
+	FImage* outImage = new FImage(100, 75, "OutImage");
 	cout << "Begin Render Scene" << endl;
 
 	//Setup camera
@@ -375,9 +410,9 @@ int main()
 		{
 			FColor Ret;
 			vec3 Res;
-			const vec2<float>& fragCoord = vec2<float>(x, y);
-			const vec2<float>& iResolution = vec2<float>(outImage->SizeX, outImage->SizeY);
-			vec2<float> uv = (fragCoord * 2.0f - iResolution) / iResolution.X;
+			const vec2& fragCoord = vec2(x, y);
+			const vec2& iResolution = vec2(outImage->SizeX, outImage->SizeY);
+			vec2 uv = (fragCoord * 2.0f - iResolution) / iResolution.X;
 			
 			const float fl = 2.5;
 			vec3 CameraRectPos = vec3(uv.X, uv.Y, fl);
@@ -398,7 +433,7 @@ int main()
 
 			Ret.R = Res.X * 255; Ret.G = Res.Y * 255; Ret.B = Res.Z * 255;
 			Ret.ClampGammaColor();
-			outImage->SetPixleColor(Ret, vec2<int>(x, y));
+			outImage->SetPixleColor(Ret, vec2(x, y));
 		}
 	}
 	outImage->SaveImageAsBMPToDesk();
