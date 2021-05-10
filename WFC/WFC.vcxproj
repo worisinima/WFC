@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Simple3DRendering.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="WFC2DMaze.cpp" />
   </ItemGroup>
   <ItemGroup>

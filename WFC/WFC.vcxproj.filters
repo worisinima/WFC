@@ -7,6 +7,9 @@
     <ClCompile Include="WFC2DMaze.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Public">

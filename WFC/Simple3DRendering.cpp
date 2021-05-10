@@ -390,7 +390,7 @@ vec3 Lighting(const vec3& p, const vec3& rd)
 }
 
 //如果要生成就打开这里
-#if 1
+#if 0
 int main()
 {
 	FImage* outImage = new FImage(100, 75, "OutImage");
